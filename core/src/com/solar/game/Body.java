@@ -2,6 +2,11 @@ package com.solar.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import java.util.ArrayList;
@@ -33,9 +38,17 @@ public class Body {
         this.image.setWidth(this.diameter);
         this.image.setHeight(this.diameter);
         this.image.setPosition(SolarSystemTest.WIDTH/2 - diameter/2, SolarSystemTest.HEIGHT/2 - diameter/2);
-        this.image.setOrigin(-300, -300);
+        this.image.setOrigin(diameter/2, diameter/2);
         this.image.setRotation(-30);
         //this.image.setRotation(imgRotationSpeed);
+
+        ParallelAction sunRotation = new ParallelAction();
+        sunRotation.addAction(Actions.rotateBy(imgRotationSpeed, 1));
+        RepeatAction infiniteLoop = new RepeatAction();
+        infiniteLoop.setCount(RepeatAction.FOREVER);
+        infiniteLoop.setAction(sunRotation);
+        this.image.addAction(infiniteLoop);
+
         SolarSystemTest.stage.addActor(this.image);
 }
 
@@ -49,7 +62,14 @@ public class Body {
         this.movingSpeed = movingSpeed;
         this.parent = parent;
 
-        parent.addChild(this);
+    }
+
+    public float getXcoord() {
+        return this.image.getImageX() + this.diameter/2;
+    }
+
+    public float getYcoord() {
+        return this.image.getImageX() + this.diameter/2;
     }
 
     private void addChild(Body child) {
@@ -59,6 +79,5 @@ public class Body {
     public Body getParent() {
         return parent;
     }
-
 
 }
