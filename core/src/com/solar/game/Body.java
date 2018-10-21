@@ -3,17 +3,17 @@ package com.solar.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
+import com.badlogic.gdx.scenes.scene2d.actions.TemporalAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Body {
+public class Body extends SolarSystemTest {
     private String textureName; //имя файла с текстурой
     private float imgRotationSpeed; //скорость поворота тела относительно своего центра
     private float distance; //расстояние от центра солнца
@@ -21,7 +21,7 @@ public class Body {
     private float angle; //угол начального положения тела
     private float movingSpeed; //скорость перемещения по орбите
     private Body parent; //тело, вокруг которого осуществляется орбитальное вращение
-    private final List<Body> childs = new ArrayList<Body>();
+    //private final List<Body> childs = new ArrayList<Body>();
     private Texture texture;
     private Image image;
 
@@ -39,6 +39,7 @@ public class Body {
         this.image = new Image(this.texture);
         this.image.setWidth(this.diameter);
         this.image.setHeight(this.diameter);
+        this.image.setName(textureName);
 
         this.image.setOrigin(diameter/2, diameter/2);
         //рандомизация угла поворота относительно центра тела
@@ -59,6 +60,7 @@ public class Body {
 
         this.image.setPosition(SolarSystemTest.WIDTH/2 - diameter/2, SolarSystemTest.HEIGHT/2 - diameter/2);
 
+        //стандартная неизменяемая анимация для солнца
         ParallelAction sunRotation = new ParallelAction();
         sunRotation.addAction(Actions.rotateBy(imgRotationSpeed, 1));
         RepeatAction infiniteLoop = new RepeatAction();
@@ -67,7 +69,7 @@ public class Body {
         this.image.addAction(infiniteLoop);
 
         SolarSystemTest.stage.addActor(this.image);
-}
+    }
 
     //конструктор остальных тел
     public Body(String textureName, float imgRotationSpeed, float distance, float diameter, float angle, float movingSpeed, Body parent) {
@@ -81,30 +83,48 @@ public class Body {
                 parent
         );
 
-        ParallelAction bodyRotation = new ParallelAction();
-        bodyRotation.addAction(Actions.rotateBy(imgRotationSpeed, 1));
+        this.image.setPosition(parent.getX() + distance*(float)Math.cos(angle) - diameter/2, parent.getY() + distance*(float)Math.sin(angle) - diameter/2);
+        //System.out.printf(this.getClass().getSimpleName()+ " %.0f ", parent.getX());
+        //System.out.printf(this.getClass().getSimpleName()+ " %.0f ", parent.getY());
+
+        final ParallelAction bodyAnimation = new ParallelAction();
+        bodyAnimation.addAction(Actions.rotateBy(imgRotationSpeed*movingSpeed, movingSpeed));
         RepeatAction infiniteLoop = new RepeatAction();
         infiniteLoop.setCount(RepeatAction.FOREVER);
-        infiniteLoop.setAction(bodyRotation);
+        infiniteLoop.setAction(bodyAnimation);
         this.image.addAction(infiniteLoop);
+
+        TemporalAction moveAnimation = new TemporalAction(360, Interpolation.linear) {
+            @Override
+            protected void update(float percent) {
+                bodyAnimation.addAction(updateAnimation(percent));
+                //System.out.printf(" 0 ");
+            }
+
+            @Override
+            public void restart() {
+
+            }
+        };
+
+        this.image.addAction(moveAnimation);
 
         SolarSystemTest.stage.addActor(this.image);
     }
 
-    public float getXcoord() {
-        return this.image.getImageX() + this.diameter/2;
+    public float getX() {
+        return this.image.getX() + diameter/2;
     }
 
-    public float getYcoord() {
-        return this.image.getImageX() + this.diameter/2;
+    public float getY() {
+        return this.image.getY() + diameter/2;
     }
 
-    private void addChild(Body child) {
-        childs.add(child);
+    Action updateAnimation(float percent) {
+        return Actions.moveTo(
+                parent.getX() + (distance) * (float) Math.cos(angle + 360 * (percent*movingSpeed/100)) - diameter / 2,
+                parent.getY() + (distance) * (float) Math.sin(angle + 360 * (percent*movingSpeed/100)) - diameter / 2
+        );
     }
-
-    public Body getParent() {
-        return parent;
-    }
-
 }
+
