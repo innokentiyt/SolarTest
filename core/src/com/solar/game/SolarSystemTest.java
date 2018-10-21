@@ -17,7 +17,35 @@ public class SolarSystemTest extends ApplicationAdapter {
 	public void create () {
 		stage = new Stage(new ScreenViewport());
 		Body Sun = new Body();
+		Body Earth = new Body(
+		        "earth.png",
+                5,
+                150,
+                70,
+                45,
+                5,
+                Sun
+        );
 
+        Body Moon = new Body(
+                "moon.png",
+                -3,
+                90,
+                35,
+                120,
+                3,
+                Earth
+        );
+
+		Body Mars = new Body(
+                "mars.png",
+                -3,
+                200,
+                65,
+                195,
+                5,
+                Sun
+        );
 	}
 
 	@Override
