@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
@@ -21,7 +20,6 @@ public class Body extends SolarSystemTest {
     private float angle; //угол начального положения тела
     private float movingSpeed; //скорость перемещения по орбите
     private Body parent; //тело, вокруг которого осуществляется орбитальное вращение
-    //private final List<Body> childs = new ArrayList<Body>();
     private Texture texture;
     private Image image;
 
@@ -98,7 +96,6 @@ public class Body extends SolarSystemTest {
             @Override
             protected void update(float percent) {
                 bodyAnimation.addAction(updateAnimation(percent));
-                //System.out.printf(" 0 ");
             }
 
             @Override

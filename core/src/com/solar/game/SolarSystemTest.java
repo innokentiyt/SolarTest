@@ -2,31 +2,19 @@ package com.solar.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SolarSystemTest extends ApplicationAdapter {
 	public static Stage stage;
 	public static final int WIDTH = 640;
 	public static final int HEIGHT = 640;
 	public static final String TITLE = "SolarSystemTest";
-	public static float PERCENT = 0;
-	public static float PERCENTINCSPEED = (float)0.5;
-    private static Array<Actor> actors = new Array<Actor>();
-    public static boolean pause = true;
+    public static boolean pause = false;
 	
 	@Override
 	public void create () {
@@ -53,7 +41,7 @@ public class SolarSystemTest extends ApplicationAdapter {
                 Earth
         );
 
-        Body MiniMoon = new Body(
+        /*Body MiniMoon = new Body(
                 "moon.png",
                 -15,
                 25,
@@ -61,7 +49,7 @@ public class SolarSystemTest extends ApplicationAdapter {
                 50,
                 100,
                 Moon
-        );
+        );*/
 
 		Body Mars = new Body(
                 "mars.png",
@@ -78,7 +66,6 @@ public class SolarSystemTest extends ApplicationAdapter {
         Button.setWidth(50);
         Button.setHeight(50);
         Button.setPosition(20,20);
-
         Button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -86,7 +73,6 @@ public class SolarSystemTest extends ApplicationAdapter {
                 pause = !pause;
             }
         });
-
         stage.addActor(Button);
     }
 
@@ -94,11 +80,8 @@ public class SolarSystemTest extends ApplicationAdapter {
 	public void render () {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		if(pause != false) stage.act();
+		if(pause == false) stage.act();
 		stage.draw();
-
-		//PERCENT += 1*PERCENTINCSPEED/100;
-		//if(PERCENT >= 1) PERCENT = 0;
 	}
 	
 	@Override
